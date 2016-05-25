@@ -84,6 +84,7 @@ class Client(object):
             cb,_,_ = resolve(request.path)
             etree.SubElement(request_em, 'component').text = str(cb.__module__)
             etree.SubElement(request_em, 'action').text = str(cb.__name__)
+            etree.SubElement(request_em, 'method').text = str(request.method)
 
             if len(request.POST):
                 params_em = etree.SubElement(request_em, 'params')
