@@ -5,6 +5,8 @@ import urllib2
 import traceback
 from lxml import etree
 
+from django.http import QueryDict
+
 
 class Client(object):
     API_URL = '%s://airbrake.io/notifier_api/v2/notices'
@@ -88,8 +90,15 @@ class Client(object):
 
             if len(request.POST):
                 params_em = etree.SubElement(request_em, 'params')
-
-                for key, val in request.POST.items():
+                params = {}
+                if request.method == "POST":
+                    params = request.POST
+                elif request.method in ["PATCH", "PUT", "DELETE"]:
+                    try:
+                        params = QueryDict(request.body)
+                    except:
+                        pass
+                for key, val in params.items():
                     var = etree.SubElement(params_em, 'var')
                     var.set('key', str(key))
                     var.text = str(val)
